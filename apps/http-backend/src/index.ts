@@ -87,33 +87,59 @@ app.post('/room', authMiddleware, async (req, res) => {
                 adminId: userId
             }
         })
-         res.json({
-        message: "room created succesfully",
-        roomname: roomName.slug
-    })
-    }catch(e){
+        res.json({
+            message: "room created succesfully",
+            roomname: roomName.slug
+        })
+    } catch (e) {
         return res.status(411).json({
             message: "Room already exists with this name"
         })
     }
-    
+
 })
 
-app.get("/chat/:roomId", async (req, res)=>{
-     const roomId = Number(req.params.roomId)
-     const messages = await prisma.chat.findMany({
+app.get("/chat/:roomId", async (req, res) => {
+
+    try {
+        const roomId = Number(req.params.roomId)
+    const messages = await prisma.chat.findMany({
         where: {
             roomId: roomId
         },
-        orderBy:{
+        orderBy: {
             id: "desc"
         },
-        take:50
-     })
+        take: 50
+    })
 
-     res.json({
+    res.json({
         messages: messages
-     })
+    })
+    } catch (e) {
+        res.json({
+            messages: []
+        })
+    }
+})
+
+app.get('/room/:slug', async (req, res) => {
+    try{
+ const slug = req.params.slug;
+    const room = await prisma.room.findFirst({
+        where: {
+            slug
+        }
+    })
+    res.json({
+        room
+    })
+    } catch(e){
+        res.json({
+            e
+        })
+    }
+   
 })
 
 
