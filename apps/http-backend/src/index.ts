@@ -5,10 +5,11 @@ import { CreateUserSchema, CreateSigninSchema, CreateRoomSchema } from '@repo/co
 import { prisma } from '@repo/db/prisma';
 import { JWT_SECRET } from '@repo/backend-common/config'
 import { authMiddleware } from "./middleware.js"
+import cors from 'cors'
 
 const app = express();
 app.use(express.json())
-
+app.use(cors())
 
 app.post("/signup", async (req, res) => {
 
@@ -21,6 +22,7 @@ app.post("/signup", async (req, res) => {
         return;
     }
     try {
+        console.log("Attempting to create user...");
         const user = await prisma.user.create({
             data: {
                 email: parsedData.data?.username,
@@ -30,6 +32,7 @@ app.post("/signup", async (req, res) => {
                 name: parsedData.data.name
             }
         })
+        console.log("User created!");
         res.json({
             userId: user.id
         })
@@ -142,5 +145,18 @@ app.get('/room/:slug', async (req, res) => {
    
 })
 
+app.get('/golu', (req, res)=>{
+    res.json({
+        message: "golu end point"
+    })
+})
+app.post('/golu1', (req, res)=>{
+    res.json({
+        message: "golu1 end point"
+    })
+})
 
-app.listen(3001)
+
+app.listen(3001, () => {
+  console.log('Server is running on http://localhost:3001')
+})

@@ -32,7 +32,7 @@ function checkAuth(token: string, JWT_SECRET: string): string | null{
 
 }
 
-wss.on('connection', function connsection(ws, request){
+wss.on('connection', function connection(ws, request){
     const url = request.url;
     if(!url){
         return;
@@ -56,9 +56,10 @@ wss.on('connection', function connsection(ws, request){
 
     ws.on('message', async function message(data){
         // methot 1st to get ridoff the type error
-        let parsedData
+        let parsedData;
         if(typeof(data) !== "string"){
            parsedData = JSON.parse(data.toString())
+           console.log(parsedData)
         }else{
             parsedData = JSON.parse(data)  // like {type: 'join_room', roomId: "1"}
         }
@@ -80,9 +81,9 @@ wss.on('connection', function connsection(ws, request){
         }
 
         if(parsedData.type === "chat"){
-            const roomId = parsedData.roomId;
+            const roomId = parsedData.room_Id;
             const message = parsedData.message;
-
+             console.log("Type of roomId:", typeof roomId, roomId);
             await prisma.chat.create({
                 data: {
                     roomId: Number(roomId),
